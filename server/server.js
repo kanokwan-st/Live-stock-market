@@ -41,17 +41,17 @@ finnhubSocket.on('open', () => {
 });
 
 // Listen for messages
-finnhubSocket.on('message', (data) => {
-  const parsed = JSON.parse(data);
+// finnhubSocket.on('message', (data) => {
+//   const parsed = JSON.parse(data);
 
-  if (parsed.type === 'trade') {
-    const price = parsed.data[0].p;
-    const timestamp = new Date(parsed.data[0].t).toLocaleTimeString();
+//   if (parsed.type === 'trade') {
+//     const price = parsed.data[0].p;
+//     const timestamp = new Date(parsed.data[0].t).toLocaleTimeString();
 
-    console.log(`Price update: $${price} at ${timestamp}`);
-    io.emit('stockPrice', { price, time: timestamp }); // Boardcast event for all users
-  }
-});
+//     console.log(`Price update: $${price} at ${timestamp}`);
+//     io.emit('stockPrice', { price, time: timestamp }); // Boardcast event for all users
+//   }
+// });
 
 // Handle errors
 finnhubSocket.on('error', (err) => {

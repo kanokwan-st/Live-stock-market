@@ -1,0 +1,120 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+
+
+.container {
+    background-color: #191B2B;
+    width: 100vw;
+    height: 100vh;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.block {
+    width: 450px;
+    /* height: 170px; */
+    background-color: #252848;
+    padding: 20px 24px;
+    border-radius: 8px;
+
+}
+/* --------- Block 1: Graph --------- */
+
+
+/* --------- Block 2: Trading History --------- */
+.history-block {
+    width: 100%;
+    height: 100px;
+    background-color: #C8B8FF;
+    overflow: auto;
+    border-radius: 8px;
+    padding: 4px 8px;
+    margin-top: 12px;
+}
+
+.history-block div {
+    padding: 4px 4px;
+    color: #111;
+    border-bottom: 3px solid #96949447;
+}
+
+/* WebKit scrollbar styles */
+.history-block::-webkit-scrollbar {
+  width: 12px;
+}
+
+.history-block::-webkit-scrollbar-thumb {
+  background: #aea5a5;
+  border-radius: 10px;
+}
+
+.history-block::-webkit-scrollbar-thumb:hover {
+  background: #9e9696;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #d9d9d9;
+  margin: 10px;
+}
+
+/* --------- Block 3: Market & Balance --------- */
+.row-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+.stock-block {
+    display: flex;
+}
+.market-block {
+    padding-right: 16px;
+}
+.balance-block {
+    padding-left: 16px;
+    border-left: 4px solid #111111;
+}
+.stock-block, .your-stock-block, .cash-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+/* --------- Button --------- */
+input {
+    color: #111;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    padding: 0 12px;
+}
+.row-3 {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+}
+.button {
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: scale(1.05);
+    transition-duration: 400ms;
+}
+
+.sell {
+    background-color: #FF4D4D;
+}
+
+.buy {
+    background-color: #00D25E;
+}
