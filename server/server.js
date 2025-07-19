@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
 
   // Initialize users
   users[socket.id] = {
-    balance: 100.00,
+    balance: 10000.00,
     stock: 0
   };
   const user = users[socket.id];
@@ -39,6 +39,7 @@ io.on("connection", (socket) => {
     currentPrice,
     amount: 0,
     action: "",
+    time: new Date().toLocaleTimeString()
   };
   const history = allHistory[socket.id];
 

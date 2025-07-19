@@ -1,12 +1,57 @@
 const socket = io();
 let currentStock = 0;
-let currentBalance = 100;
+let currentBalance = 10000;
 let currentPrice = 0;
 
+//------ Get stock data from Finnhub.io ------//
 socket.on('stockPrice', (data) => {
+    // Update display
     document.getElementById('price').textContent = `$${data.price.toFixed(2)}`;
     currentPrice = data.price;
+
+    // Add to chart
+    stockChart.data.labels.push(data.time);
+    stockChart.data.datasets[0].data.push(data.price);
+
+    // Keep only latest 20 data
+    if (stockChart.data.labels.length > 20) {
+        stockChart.data.labels.shift();
+        stockChart.data.datasets[0].data.shift();
+    }
+
+    stockChart.update();
+
 })
+
+//------ Stock Chart ------//
+const ctx = document.getElementById('stockChart');
+
+const stockChart = new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Stock Price",
+      data: [],
+      borderColor: "rgb(75, 192, 192)",
+      tension: 0.2,
+    }]
+  },
+  options: {
+    scales: {
+      x: {
+        title: { display: true, text: "Time" },
+      },
+      y: {
+        title: { display: true, text: "Price ($)" },
+      },
+    },
+    animation: {
+        duration: 200,
+    }
+  },
+});
+
 
 //------ Sell Button Handle ------//
 document.getElementById('sellBtn').addEventListener('click', () => {
@@ -64,8 +109,10 @@ socket.on('updateUser', (data) => {
 //------ Keep history ------//
 socket.on('keepHistory', (data) => {
     const div = document.createElement('div');
-    div.textContent = `${data.action === 'Bought' ? '🟢' : '🔴'} ${data.action} ${data.amount} ${data.amount > 1 ? 'stocks' : 'stock'} at $${data.currentPrice.toFixed(2)} each`;
+    div.textContent = `${data.time} ${data.action === 'Bought' ? '🟢' : '🔴'} ${data.action} ${data.amount} ${data.amount > 1 ? 'stocks' : 'stock'} at $${data.currentPrice.toFixed(2)} each`;
     const historyBlock = document.getElementById('history-block')
     historyBlock.appendChild(div);
     historyBlock.scrollTop = historyBlock.scrollHeight; // scroll the block all the way to bottom
 })
+
+

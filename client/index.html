@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Stock Market</title>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script defer src="./script.js"></script>
   <link rel="stylesheet" href="./style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -12,9 +13,11 @@
 <body>
   <div class="container">
     <h1>Live Stock Market 📊</h1>
-    <!-- Graph Section -->
+    <!-- Chart Section -->
     <section>
-      <div class="block"></div>
+      <div class="block">
+        <canvas id="stockChart"></canvas>
+      </div>
     </section>
 
     <!-- History Section -->
@@ -41,7 +44,7 @@
           <h2>Balance</h2>
           <div class="cash-block">
             <p>Cash Balance:</p>
-            <div id="balance">$100.00</div>
+            <div id="balance">$10000.00</div>
           </div>
           <div class="your-stock-block">
             <p>Your Stocks:</p>
