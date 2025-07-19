@@ -21,18 +21,62 @@ app.use(express.static(join(__dirname, '../client')));
 
 //-------- Socket.io Connection (server <-> client) ---------//
 const io = new Server(server);
+const users = {};
+const allHistory = {};
+
 io.on("connection", (socket) => {
   console.log("User connected");
+
+  // Initialize users
+  users[socket.id] = {
+    balance: 100.00,
+    stock: 0
+  };
+  const user = users[socket.id];
+
+  // Initialize allHistory
+  allHistory[socket.id] = {
+    currentPrice,
+    amount: 0,
+    action: "",
+  };
+  const history = allHistory[socket.id];
+
+  // Sell event
+  socket.on("sellStock", (amount) => {
+    user.balance += (amount * currentPrice);
+    user.stock -= amount;
+    socket.emit('updateUser', user);
+
+    history.currentPrice = currentPrice;
+    history.amount = amount;
+    history.action = "Sold";
+    socket.emit('keepHistory', history);
+  })
+  // Buy event
+  socket.on("buyStock", (amount) => {
+    user.balance -= (amount * currentPrice);
+    user.stock += amount;
+    socket.emit('updateUser', user);
+    
+    history.currentPrice = currentPrice;
+    history.amount = amount;
+    history.action = "Bought";
+    socket.emit('keepHistory', history);
+  })
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });
+
+  
 });
 
 
 //------------- Connect to Finnhub --------------//
 const FINNHUB_SOCKET_URL = `wss://ws.finnhub.io?token=${API_KEY}`;
 const finnhubSocket = new WebSocket(FINNHUB_SOCKET_URL);
+let currentPrice = 0;
 
 // Connection opened -> Subscribe
 finnhubSocket.on('open', () => {
@@ -41,17 +85,19 @@ finnhubSocket.on('open', () => {
 });
 
 // Listen for messages
-// finnhubSocket.on('message', (data) => {
-//   const parsed = JSON.parse(data);
+finnhubSocket.on('message', (data) => {
+  const parsed = JSON.parse(data);
 
-//   if (parsed.type === 'trade') {
-//     const price = parsed.data[0].p;
-//     const timestamp = new Date(parsed.data[0].t).toLocaleTimeString();
+  if (parsed.type === 'trade') {
+    const price = parsed.data[0].p;
+    const timestamp = new Date(parsed.data[0].t).toLocaleTimeString();
 
-//     console.log(`Price update: $${price} at ${timestamp}`);
-//     io.emit('stockPrice', { price, time: timestamp }); // Boardcast event for all users
-//   }
-// });
+    console.log(`Price update: $${price} at ${timestamp}`);
+    io.emit('stockPrice', { price, time: timestamp }); // Boardcast event for all users
+
+    currentPrice = price;
+  }
+});
 
 // Handle errors
 finnhubSocket.on('error', (err) => {

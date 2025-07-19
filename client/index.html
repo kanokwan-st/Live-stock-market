@@ -21,11 +21,8 @@
     <section>
       <div class="block">
         <h2>Trading History</h2>
-        <div class="history-block">
+        <div id="history-block" class="history-block">
           <div>Welcome to Live Stock Market...</div>
-          <div>abc</div>
-          <div>abc</div>
-          <div>abc</div>
         </div>
       </div>
     </section>
@@ -33,23 +30,22 @@
     <!-- Price and Balance Section -->
     <section>
       <div class="block row-2">
-        <!-- <div id="price">Loading...</div> -->
         <div class="market-block">
           <h2>Market Price</h2>
           <div class="stock-block">
             <p>ABC</p>
-            <div>$100.00</div>
+            <div id="price">Loading...</div>
           </div>
         </div>
         <div class="balance-block">
           <h2>Balance</h2>
-          <div class="your-stock-block">
-            <p>Your Stocks:</p>
-            <div>2</div>
-          </div>
           <div class="cash-block">
             <p>Cash Balance:</p>
-            <div>$100.00</div>
+            <div id="balance">$100.00</div>
+          </div>
+          <div class="your-stock-block">
+            <p>Your Stocks:</p>
+            <div id="stock">0</div>
           </div>
         </div>
 
@@ -59,9 +55,9 @@
     <!-- Sell/Buy Section -->
     <section>
       <div class="block row-3">
-        <input type="number" placeholder="Put amount of stock...">
-        <button class="button sell">Sell</button>
-        <button class="button buy">Buy</button>
+        <input id="inputStock" type="number" value="" min="1" step="1" required placeholder="Put amount of stock...">
+        <button id="sellBtn" class="button sell">Sell</button>
+        <button id="buyBtn" class="button buy">Buy</button>
       </div>
     </section>
     
