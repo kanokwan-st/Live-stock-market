@@ -52,6 +52,7 @@ io.on("connection", (socket) => {
     history.currentPrice = currentPrice;
     history.amount = amount;
     history.action = "Sold";
+    history.time = new Date().toLocaleTimeString()
     socket.emit('keepHistory', history);
   })
   // Buy event
@@ -63,6 +64,7 @@ io.on("connection", (socket) => {
     history.currentPrice = currentPrice;
     history.amount = amount;
     history.action = "Bought";
+    history.time = new Date().toLocaleTimeString()
     socket.emit('keepHistory', history);
   })
 
