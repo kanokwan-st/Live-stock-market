@@ -10,16 +10,7 @@ socket.on('stockPrice', (data) => {
     currentPrice = data.price;
 
     // Add to chart
-    stockChart.data.labels.push(data.time);
-    stockChart.data.datasets[0].data.push(data.price);
-
-    // Keep only latest 20 data
-    if (stockChart.data.labels.length > 20) {
-        stockChart.data.labels.shift();
-        stockChart.data.datasets[0].data.shift();
-    }
-
-    stockChart.update();
+    updateChart(data.time, data.price, null);
 
 })
 
@@ -27,19 +18,36 @@ socket.on('stockPrice', (data) => {
 const ctx = document.getElementById('stockChart');
 
 const stockChart = new Chart(ctx, {
-  type: "line",
   data: {
     labels: [],
     datasets: [{
+      type: "line",
       label: "Stock Price",
       data: [],
       borderColor: "rgb(75, 192, 192)",
       tension: 0.2,
+      spanGaps: true,
+      order: 2
+    },{
+      type: "bubble",
+      label: "Bought",
+      data: [],
+      backgroundColor: 'rgb(0, 210, 94)',
+      tension: 0.2,
+      order: 1
+    },{
+      type: "bubble",
+      label: "Sell",
+      data: [],
+      backgroundColor: 'rgb(255, 77, 77)',
+      tension: 0.2,
+      order: 1
     }]
   },
   options: {
     scales: {
       x: {
+        type: 'category',
         title: { display: true, text: "Time" },
       },
       y: {
@@ -56,16 +64,19 @@ const stockChart = new Chart(ctx, {
 //------ Sell Button Handle ------//
 document.getElementById('sellBtn').addEventListener('click', () => {
     const input = document.getElementById('inputStock');
-    const amount = parseInt(input.value);
     input.setCustomValidity('');
-
+    
     // validate input
     if (!input.checkValidity()) {
-        input.reportValidity();
-        return;
+      input.reportValidity();
+      return;
     }
+
+    const amount = parseInt(input.value);
+    
+    // enough stock to sell?
     if (amount > currentStock) {
-        input.setCustomValidity(`You only have ${currentStock} ${currentStock > 1 ? 'stocks' : 'stock'}.`);
+      input.setCustomValidity(`You only have ${currentStock} ${currentStock > 1 ? 'stocks' : 'stock'}.`);
         input.reportValidity();
         return;
     }
@@ -76,14 +87,17 @@ document.getElementById('sellBtn').addEventListener('click', () => {
 //------ Buy Button Handle ------//
 document.getElementById('buyBtn').addEventListener('click', () => {
     const input = document.getElementById('inputStock');
-    const amount = parseInt(input.value);
     input.setCustomValidity('');
-
+    
     // validate input
     if (!input.checkValidity()) {
-        input.reportValidity();
-        return;
+      input.reportValidity();
+      return;
     }
+
+    const amount = parseInt(input.value);
+
+    // enough money to buy?
     if (amount * currentPrice > currentBalance) {
         input.setCustomValidity(`Not enough balance. You need $${(amount * currentPrice).toFixed(2)}`);
         input.reportValidity();
@@ -113,6 +127,35 @@ socket.on('keepHistory', (data) => {
     const historyBlock = document.getElementById('history-block')
     historyBlock.appendChild(div);
     historyBlock.scrollTop = historyBlock.scrollHeight; // scroll the block all the way to bottom
+
+    // Add to chart
+    updateChart(data.time, null, data.currentPrice, data.action);
 })
+
+//------ Funtion Update chart ------//
+function updateChart(time, price, actionPrice, action = null) {
+  // Add data to chart
+  stockChart.data.labels.push(time);
+  stockChart.data.datasets[0].data.push(price);
+
+  if (actionPrice && action === 'Bought') {
+    stockChart.data.datasets[1].data.push({x: time, y: actionPrice, r: 8, action: action});
+  } else if (actionPrice && action === 'Sold') {
+    stockChart.data.datasets[2].data.push({x: time, y: actionPrice, r: 8, action: action});
+  } else {
+    stockChart.data.datasets[1].data.push({x: time, y: price, r: 0, action: null});
+    stockChart.data.datasets[2].data.push({x: time, y: price, r: 0, action: null});
+  }
+
+  // Keep only latest 20 data
+  if (stockChart.data.labels.length > 20) {
+      stockChart.data.labels.shift();
+      stockChart.data.datasets[0].data.shift();
+      stockChart.data.datasets[1].data.shift();
+      stockChart.data.datasets[2].data.shift();
+  }
+
+  stockChart.update();
+}
 
 
