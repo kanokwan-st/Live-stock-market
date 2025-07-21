@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
 
   // Initialize users
   users[socket.id] = {
-    balance: 10000.00,
+    balance: 50000.00,
     stock: 0
   };
   const user = users[socket.id];
@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
     currentPrice,
     amount: 0,
     action: "",
-    time: new Date().toLocaleTimeString()
+    time: latestTime
   };
   const history = allHistory[socket.id];
 
@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     history.currentPrice = currentPrice;
     history.amount = amount;
     history.action = "Sold";
-    history.time = new Date().toLocaleTimeString()
+    history.time = latestTime;
     socket.emit('keepHistory', history);
   })
   // Buy event
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
     history.currentPrice = currentPrice;
     history.amount = amount;
     history.action = "Bought";
-    history.time = new Date().toLocaleTimeString()
+    history.time = latestTime;
     socket.emit('keepHistory', history);
   })
 
@@ -80,6 +80,7 @@ io.on("connection", (socket) => {
 const FINNHUB_SOCKET_URL = `wss://ws.finnhub.io?token=${API_KEY}`;
 const finnhubSocket = new WebSocket(FINNHUB_SOCKET_URL);
 let currentPrice = 0;
+let latestTime;
 
 // Connection opened -> Subscribe
 finnhubSocket.on('open', () => {
@@ -89,11 +90,12 @@ finnhubSocket.on('open', () => {
 
 // Listen for messages
 finnhubSocket.on('message', (data) => {
-  const parsed = JSON.parse(data);
+  const parsedData = JSON.parse(data); // convert data to obj.
 
-  if (parsed.type === 'trade') {
-    const price = parsed.data[0].p;
-    const timestamp = new Date(parsed.data[0].t).toLocaleTimeString();
+  if (parsedData.type === 'trade') {
+    const price = parsedData.data[0].p;
+    const timestamp = new Date(parsedData.data[0].t).toISOString();
+    latestTime = timestamp;
 
     console.log(`Price update: $${price} at ${timestamp}`);
     io.emit('stockPrice', { price, time: timestamp }); // Boardcast event for all users

@@ -1,69 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Stock Market</title>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script defer src="./script.js"></script>
-  <link rel="stylesheet" href="./style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="container">
-    <h1>Live Stock Market 📊</h1>
-    <!-- Chart Section -->
-    <section>
-      <div class="block">
-        <canvas id="stockChart"></canvas>
-      </div>
-    </section>
-
-    <!-- History Section -->
-    <section>
-      <div class="block">
-        <h2>Trading History</h2>
-        <div id="history-block" class="history-block">
-          <div>Welcome to Live Stock Market...</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Price and Balance Section -->
-    <section>
-      <div class="block row-2">
-        <div class="market-block">
-          <h2>Market Price</h2>
-          <div class="stock-block">
-            <p>ABC</p>
-            <div id="price">Loading...</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Stock Market</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script defer src="./script.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Live Stock Market 📊</h1>
+      <div class="grid">
+        <!-- Chart Section -->
+        <section>
+          <div class="block top">
+            <canvas id="stockChart"></canvas>
           </div>
-        </div>
-        <div class="balance-block">
-          <h2>Balance</h2>
-          <div class="cash-block">
-            <p>Cash Balance:</p>
-            <div id="balance">$10000.00</div>
-          </div>
-          <div class="your-stock-block">
-            <p>Your Stocks:</p>
-            <div id="stock">0</div>
-          </div>
-        </div>
+        </section>
 
-      </div>
-    </section>
+        <!-- History Section -->
+        <section>
+          <div class="block top">
+            <h2>Trading History</h2>
+            <div id="history-block" class="history-block">
+              <div>Welcome to Live Stock Market...</div>
+            </div>
+          </div>
+        </section>
 
-    <!-- Sell/Buy Section -->
-    <section>
-      <div class="block row-3">
-        <input id="inputStock" type="number" value="" min="1" step="1" required placeholder="Put amount of stock...">
-        <button id="sellBtn" class="button sell">Sell</button>
-        <button id="buyBtn" class="button buy">Buy</button>
+        <!-- Price and Balance Section -->
+        <section>
+          <div class="block row-2 bottom">
+            <div class="market-block">
+              <h2>Market Price</h2>
+              <div class="stock-block">
+                <p>ETH-USD</p>
+                <div id="price">Loading...</div>
+              </div>
+            </div>
+            <div class="balance-block">
+              <h2>Balance</h2>
+              <div class="cash-block">
+                <p>Cash Balance:</p>
+                <div id="balance">$50000.00</div>
+              </div>
+              <div class="your-stock-block">
+                <p>Your Stocks:</p>
+                <div id="stock">0</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sell/Buy Section -->
+        <section>
+          <div class="block bottom">
+            <label for="inputStock">Amount of Stock</label>
+            <div class="row-3">
+              <input
+                id="inputStock"
+                type="number"
+                value=""
+                min="1"
+                step="1"
+                required
+                placeholder="Put amount of stock..."
+              />
+              <button id="sellBtn" class="button sell">Sell</button>
+              <button id="buyBtn" class="button buy">Buy</button>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
-    
-  </div>
-</body>
+    </div>
+  </body>
 </html>

@@ -1,6 +1,6 @@
 const socket = io();
 let currentStock = 0;
-let currentBalance = 10000;
+let currentBalance = 50000;
 let currentPrice = 0;
 
 //------ Get stock data from Finnhub.io ------//
@@ -16,10 +16,11 @@ socket.on('stockPrice', (data) => {
 
 //------ Stock Chart ------//
 const ctx = document.getElementById('stockChart');
+const textColor = '#FFF';
 
 const stockChart = new Chart(ctx, {
+  type: 'scatter',
   data: {
-    labels: [],
     datasets: [{
       type: "line",
       label: "Stock Price",
@@ -32,14 +33,14 @@ const stockChart = new Chart(ctx, {
       type: "bubble",
       label: "Bought",
       data: [],
-      backgroundColor: 'rgb(0, 210, 94)',
+      backgroundColor: '#00D25E',
       tension: 0.2,
       order: 1
     },{
       type: "bubble",
-      label: "Sell",
+      label: "Sold",
       data: [],
-      backgroundColor: 'rgb(255, 77, 77)',
+      backgroundColor: '#FF4D4D',
       tension: 0.2,
       order: 1
     }]
@@ -47,13 +48,35 @@ const stockChart = new Chart(ctx, {
   options: {
     scales: {
       x: {
-        type: 'category',
-        title: { display: true, text: "Time" },
+        type: 'time',
+        time: {
+          tooltipFormat: 'pp',
+          displayFormats: {
+            second: 'pp'
+          }
+        },
+        title: { display: true, text: "Time", color: textColor },
+        ticks: { color: '#CCCCDD' }
       },
       y: {
-        title: { display: true, text: "Price ($)" },
+        title: { display: true, text: "Price ($)", color: textColor },
+        ticks: { color: '#CCCCDD' }
       },
     },
+    plugins: {
+      legend: { labels: {color: textColor} },
+      tooltip: {
+        callbacks: {
+          label: function (ctx) {
+          const time = new Date(ctx.parsed.x).toLocaleTimeString();
+          const price = ctx.parsed.y.toFixed(2);
+          return `Time: ${time}, Price: $${price}`;
+        }
+        }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false, 
     animation: {
         duration: 200,
     }
@@ -122,8 +145,12 @@ socket.on('updateUser', (data) => {
 
 //------ Keep history ------//
 socket.on('keepHistory', (data) => {
+    const time = new Date(data.time);
+    const localeTime = time.toLocaleTimeString();
+
+    // Add div to history-block
     const div = document.createElement('div');
-    div.textContent = `${data.time} ${data.action === 'Bought' ? '🟢' : '🔴'} ${data.action} ${data.amount} ${data.amount > 1 ? 'stocks' : 'stock'} at $${data.currentPrice.toFixed(2)} each`;
+    div.textContent = `${localeTime} ${data.action === 'Bought' ? '🟢' : '🔴'} ${data.action} ${data.amount} ${data.amount > 1 ? 'stocks' : 'stock'} at $${data.currentPrice.toFixed(2)} each.`;
     const historyBlock = document.getElementById('history-block')
     historyBlock.appendChild(div);
     historyBlock.scrollTop = historyBlock.scrollHeight; // scroll the block all the way to bottom
@@ -135,21 +162,21 @@ socket.on('keepHistory', (data) => {
 //------ Funtion Update chart ------//
 function updateChart(time, price, actionPrice, action = null) {
   // Add data to chart
-  stockChart.data.labels.push(time);
-  stockChart.data.datasets[0].data.push(price);
+  if (price != null) {
+    stockChart.data.datasets[0].data.push({x: new Date(time), y: price});
+  }
 
   if (actionPrice && action === 'Bought') {
-    stockChart.data.datasets[1].data.push({x: time, y: actionPrice, r: 8, action: action});
+    stockChart.data.datasets[1].data.push({x: time, y: actionPrice, r: 8});
   } else if (actionPrice && action === 'Sold') {
-    stockChart.data.datasets[2].data.push({x: time, y: actionPrice, r: 8, action: action});
+    stockChart.data.datasets[2].data.push({x: time, y: actionPrice, r: 8});
   } else {
     stockChart.data.datasets[1].data.push({x: time, y: price, r: 0, action: null});
     stockChart.data.datasets[2].data.push({x: time, y: price, r: 0, action: null});
   }
 
   // Keep only latest 20 data
-  if (stockChart.data.labels.length > 20) {
-      stockChart.data.labels.shift();
+  if (stockChart.data.datasets[0].data.length > 20) {
       stockChart.data.datasets[0].data.shift();
       stockChart.data.datasets[1].data.shift();
       stockChart.data.datasets[2].data.shift();
