@@ -68,12 +68,17 @@ io.on("connection", (socket) => {
     socket.emit('keepHistory', history);
   })
 
+  // Show Message
+  socket.on("sendMessage", (message) => {
+    io.emit("showMessage", message);
+  })
+
   socket.on("disconnect", () => {
     console.log("User disconnected");
   });
-
-  
 });
+
+
 
 
 //------------- Connect to Finnhub --------------//

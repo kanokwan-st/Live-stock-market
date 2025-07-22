@@ -190,6 +190,9 @@ input {
     justify-content: space-between;
     overflow: hidden;
 }
+.chat-box.open {
+    display: flex;
+}
 
 /* head */
 .chat-head {

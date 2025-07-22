@@ -2,17 +2,21 @@
 const chatIcon = document.querySelector(".chat-icon-box");
 const chatBox = document.querySelector(".chat-box")
 
-chatIcon.addEventListener("click", () => {
-  console.log('log this')
-  if (chatBox.style.display === 'none' || chatBox.style.display === '') {
-    chatBox.style.display = 'flex';
-  } else {
-    chatBox.style.display = 'none';
+chatIcon.addEventListener("click", (e) => {
+  e.stopPropagation();
+  chatBox.classList.toggle('open');
+})
+
+document.addEventListener("click", (e) => {
+  if (!chatBox.contains(e.target) && !chatIcon.contains(e.target)) {
+    chatBox.classList.remove('open');
   }
 })
 
 
 
+
+//------ socket.io ------//
 const socket = io();
 let currentStock = 0;
 let currentBalance = 50000;
@@ -200,3 +204,39 @@ function updateChart(time, price, actionPrice, action = null) {
   stockChart.update();
 }
 
+
+//------ Chat Socket ------//
+const sendBtn = document.getElementById("sendBtn");
+const input = document.getElementById("messageInput");
+
+// Send message by click button or enter
+sendBtn.addEventListener('click', () => {
+    sendMessage();
+})
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === "Enter") {
+    sendMessage();
+  } 
+})
+
+function sendMessage() {
+  const message = input.value.trim();
+  if (message) {
+    socket.emit('sendMessage', message);
+    input.value = '';
+  }
+}
+
+// Show message
+socket.on('showMessage', (message) => {
+  const container = document.querySelector('.message-container');
+  // Create message block
+  const div = document.createElement('div');
+  div.classList.add('message-block');
+  div.textContent = message;
+  // Put message block into container
+  container.appendChild(div);
+
+  container.scrollTop = container.scrollHeight;
+})
