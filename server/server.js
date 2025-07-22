@@ -23,9 +23,12 @@ app.use(express.static(join(__dirname, '../client')));
 const io = new Server(server);
 const users = {};
 const allHistory = {};
+let userCount = 0;
 
 io.on("connection", (socket) => {
   console.log("User connected");
+  userCount++;
+  io.emit('updateUserCount', userCount);
 
   // Initialize users
   users[socket.id] = {
@@ -75,7 +78,10 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
+    userCount--;
+    io.emit("updateUserCount", userCount);
   });
+
 });
 
 

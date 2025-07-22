@@ -240,3 +240,10 @@ socket.on('showMessage', (message) => {
 
   container.scrollTop = container.scrollHeight;
 })
+
+
+//------ User Count ------//
+socket.on('updateUserCount', (userCount) => {
+  const count = document.getElementById('userCount');
+  count.textContent = userCount;
+} )

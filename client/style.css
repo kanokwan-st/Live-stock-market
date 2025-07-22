@@ -273,6 +273,13 @@ input {
     cursor: pointer;
 }
 
+/* --------- User count --------- */
+.user-count {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+}
+
 
 
 
