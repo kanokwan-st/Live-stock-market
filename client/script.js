@@ -1,3 +1,18 @@
+//------ Chat function ------//
+const chatIcon = document.querySelector(".chat-icon-box");
+const chatBox = document.querySelector(".chat-box")
+
+chatIcon.addEventListener("click", () => {
+  console.log('log this')
+  if (chatBox.style.display === 'none' || chatBox.style.display === '') {
+    chatBox.style.display = 'flex';
+  } else {
+    chatBox.style.display = 'none';
+  }
+})
+
+
+
 const socket = io();
 let currentStock = 0;
 let currentBalance = 50000;
@@ -184,5 +199,4 @@ function updateChart(time, price, actionPrice, action = null) {
 
   stockChart.update();
 }
-
 
